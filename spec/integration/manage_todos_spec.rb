@@ -7,12 +7,23 @@ feature 'Manage todos' do
     user_sees_todo_item 'Buy some milk'
   end
 
-    scenario 'view only my todos' do
+  scenario 'view only my todos' do
       create(:todo, description: "Buy some eggs", owner_email: 'not_me@example.com')
       sign_in_as 'me@example.com'
       create_todo_with_description 'Buy some milk'
       user_sees_todo_item 'Buy some milk'
       user_does_not_see_todo_item 'Buy some eggs'
+  end
+
+  scenario 'mark todos as complete' do
+    sign_in
+    create_todo_with_description 'Buy some milk'
+
+    within 'li.todo' do
+      click_link 'Complete'
+    end
+
+    expect(page).to have_css 'li.todo.completed'
   end
 
   def create_todo_with_description(description)
